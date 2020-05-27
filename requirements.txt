@@ -1,0 +1,16 @@
+numpy
+scipy
+Pillow
+cython
+matplotlib
+scikit-image==0.16.2
+scikit-learn==0.19.1
+tensorflow==1.15.0
+tensorflow-gpu==1.15.0
+keras==2.1.0
+opencv-python
+h5py
+imgaug
+filterpy==1.4.1
+numba==0.38.1
+IPython[all]

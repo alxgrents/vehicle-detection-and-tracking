@@ -20,8 +20,8 @@ sys.path.append(ROOT_DIR)
 sys.path.append(MASK_RCNN_DIR)
 sys.path.append(SORT_DIR)
 
-from traffic.utils.TrafficConfig import TrafficConfig
-from traffic.utils.Predictor import Predictor
+from detector.utils.Detector import Detector
+from detector.utils.DetectorConfig  import DetectorConfig
 
 if __name__ == '__main__':
 	args = parser.parse_args()
@@ -45,10 +45,8 @@ if __name__ == '__main__':
 		h = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
 		fps = int(stream.get(cv2.CAP_PROP_FPS))
 
-	# MODEL_PATH = os.path.join(ROOT_DIR,'weights','mask_rcnn_traffic_0089.h5')
-	# video_file = os.path.join(ROOT_DIR, 'input', 'policlinica_7s.mp4')
 	
-	config = TrafficConfig()
+	config = DetectorConfig()
 
 	
 
@@ -61,7 +59,7 @@ if __name__ == '__main__':
 	fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 	writer = cv2.VideoWriter(outName, fourcc, fps, (w, h), True)
 
-	pr = Predictor(mode = "inference",
+	pr = Detector(mode = "inference",
 				   model_dir = ROOT_DIR,
 				   model_path=MODEL_PATH,
 				   config=config,
@@ -76,12 +74,12 @@ if __name__ == '__main__':
 	print('|'*frame_count)
 	i=1
 	if video_file is None:
-		pr.do_predict(image)
+		pr.do_detect_for_image(image)
 	else:
 
 		while pr.streamIsOpened():
 			print(f'{i} in {frame_count}')
-			pr.do_predict()
+			pr.do_detect()
 			i+=1
 	print()
 	writer.release()

@@ -49,6 +49,12 @@ if __name__ == '__main__':
     info_file = args.coco_dataset_file
     TEST_DATASET_DIR = args.test_dataset_folder
 
+
+    if not os.path.exists(WEIGHT_PATH):
+        print('FILE NOT EXISTS!!')
+        exit()
+
+	
     config = DetectorConfig()
     config.display()
 
@@ -93,13 +99,13 @@ if __name__ == '__main__':
             image_to_annotations[image_id] = [i]
     print(image_to_annotations)
     detect_data = detector.getData()
-    all_score = 0
+    sum_score = 0
     for i in range(image_count):
         image_id = data['images'][i]['id']
         annotations = image_to_annotations[image_id]
+	sum_iou = 0
         for annotation in annotations:
             max_iou = 0
-            max_score = 0
             num_identical = 0
             for detect in detect_data[i]['detections']:
                 box1 = detect['box']
@@ -110,20 +116,7 @@ if __name__ == '__main__':
                     num_identical+=1
                     if u>max_iou:
                         max_iou = u
-            max_score += max_iou
-            max_score = max_score / (len(detect_data[i]['detections'])+len(annotations)-num_identical)
-        all_score += max_score
-    print('ANSWER: ', all_score/image_count)
-
-    if not os.path.exists(WEIGHT_PATH):
-        print('FILE NOT EXISTS!!')
-        exit()
-
-    
-    
-    
-    print("Training network heads")
-    #model = modellib.MaskRCNN(mode="training", model_dir=MODEL_DIR, config=config)
-    #model.load_weights(WEIGHT_PATH, by_name=True, exclude=["mrcnn_class_logits", "mrcnn_bbox_fc","mrcnn_bbox", "mrcnn_mask"])   
-    #model.train(dataset_train, dataset_val, learning_rate=config.LEARNING_RATE, epochs=2, layers='heads')
-    print("FINISH!!!")
+	    sum_iou += max_iou
+        max_score = sum_iou / (len(detect_data[i]['detections'])+len(annotations)-num_identical)
+      	sum_score += max_score
+    print('accuracy: ', sum_score/image_count)
